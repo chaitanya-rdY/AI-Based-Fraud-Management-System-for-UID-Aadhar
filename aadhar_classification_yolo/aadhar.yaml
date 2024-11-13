@@ -1,0 +1,5 @@
+train: ./aadhar_classification_yolo/train
+val: ./aadhar_classification_yolo/val
+names:
+  0: Aadhar
+  1: Non_Aadhar

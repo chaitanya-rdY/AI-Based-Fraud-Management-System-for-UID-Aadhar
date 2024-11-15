@@ -1,12 +1,12 @@
 task: classify
 mode: train
-model: yolov8n-cls.pt
-data: aadhar_classification_yolo/aadhar.yaml
+model: yolo11n-cls.pt
+data: dataset
 epochs: 10
 time: null
 patience: 100
-batch: 16
-imgsz: 224
+batch: 8
+imgsz: 640
 save: true
 save_period: -1
 cache: false

@@ -1,0 +1,8 @@
+path: C:/Users/chait/OneDrive/Desktop/AI based fraud managment for UID aadhar/detection/dataset
+train: train
+val: val
+
+names:
+  0: name
+  1: uid
+  2: address

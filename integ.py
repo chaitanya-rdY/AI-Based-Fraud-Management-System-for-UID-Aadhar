@@ -3,10 +3,9 @@ import pandas as pd
 from ultralytics import YOLO
 import easyocr
 
-file_path = "C:/Users/chait/OneDrive/Desktop/AI based fraud managment for UID aadhar/OUTPUT.xlsx"
 predifined_columns = ["NAME","UID","ADDRESS"]
 detected_objects = []
-image_path = "f.jpg"
+##image_path
 classification_model = YOLO("C:/Users/chait/OneDrive/Desktop/AI based fraud managment for UID aadhar/aadhar_classification_yolo/runs/classify/train/weights/best.pt")
 detection_model = YOLO("C:/Users/chait/OneDrive/Desktop/AI based fraud managment for UID aadhar/detection/runs/detect/train8/weights/best.pt")
 reader = easyocr.Reader(['en'], gpu=True)
@@ -62,16 +61,19 @@ def process_image(image_path,file_path):
         try:
             existing_data = pd.read_excel(file_path)
         except FileNotFoundError:
-            #if file is not found create a dtaframe with a predifined coumns
-            existing_data = pd.DataFrame(columns = predifined_columns)
-        new_data = pd.DataFrame([data], columns=predifined_columns)
+            # If file is not found, create a dataframe with predefined columns
+            existing_data = pd.DataFrame(columns=predifined_columns)
+        new_data = pd.DataFrame([data])
+        for col in predifined_columns:
+            if col not in new_data.columns:
+                new_data[col] = None
+        new_data = new_data[predifined_columns]
         new_data.set_index('UID', inplace=True)
         existing_data.set_index('UID', inplace=True)
         combined_data = existing_data.combine_first(new_data)
-        combined_data.reset_index(inplace=True)
+        combined_data = combined_data.reset_index()  # Reset index to make 'UID' a column again
         combined_data.to_excel(file_path, index=False)
-        print("data succesfully moved to Excel 😁")
+        print("Data successfully moved to Output ExcelFile 😁")
+        return data
     else:
-        print("please upload Aadhar 😡")
-
-process_image(image_path,file_path)
+        print("Please upload Aadhar 😡")

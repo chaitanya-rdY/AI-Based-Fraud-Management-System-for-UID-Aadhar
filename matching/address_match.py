@@ -1,5 +1,5 @@
 import re
-from difflib import SequenceMatcher
+from fuzzywuzzy import fuzz
 
 def normalize_address(address):
     # Remove common terms and non-alphanumeric characters, normalize spaces
@@ -11,20 +11,22 @@ def normalize_address(address):
     address = re.sub(r'\s+', ' ', address).strip()
     return address
 
+def extract_pincode(address):
+    # Assuming pincode is a 6-digit number
+    match = re.search(r'\b\d{6}\b', address)
+    return match.group(0) if match else ""
+
 def pincode_match(input_pincode, extracted_pincode):
     input_pincode = input_pincode.replace(" ", "")
     extracted_pincode = extracted_pincode.replace(" ", "")
     return 100 if input_pincode == extracted_pincode else 0
 
 def field_match(input_field, extracted_field):
-    if input_field == extracted_field:
-        return 100
-    else:
-        return int(SequenceMatcher(None, input_field, extracted_field).ratio() * 100)
+    return fuzz.ratio(input_field, extracted_field)
 
 def address_match(input_address, extracted_address, cutoff=70):
-    input_address = normalize_address(input_address)
-    extracted_address = normalize_address(extracted_address)
+    input_address = normalize_address(str(input_address))
+    extracted_address = normalize_address(str(extracted_address))
     
     input_fields = input_address.split()
     extracted_fields = extracted_address.split()
@@ -42,12 +44,19 @@ def address_match(input_address, extracted_address, cutoff=70):
         total_weight += 100
     
     final_score = (total_score / total_weight) * 100
-    return final_score >= cutoff
+    if final_score >= cutoff:
+        return True
+    return False
 
-def is_address_match(input_address, extracted_address, input_pincode, extracted_pincode, cutoff=70):
+def is_address_match(input_address, extracted_address, cutoff=70):
+    input_pincode = extract_pincode(input_address)
+    extracted_pincode = extract_pincode(extracted_address)
+    
     if pincode_match(input_pincode, extracted_pincode) == 100:
         return address_match(input_address, extracted_address, cutoff)
     return False
 
-
-##it returns the match true if total_sccore is greater than 70 percent otherwise false
+# Example usage
+input_address = "123 Main Street, Marg, 560001"
+extracted_address = "123 Main St, Lane, 560001"
+print(is_address_match(input_address, extracted_address))

@@ -47,7 +47,7 @@ This project aims to develop an AI-based system for detecting and managing fraud
 
 Clone the repository:
 ```bash
-git clone <[text](https://github.com/chaitanya-rdY/AI-Based-Fraud-Management-System-for-UID-Aadhar)>
+git clone <(https://github.com/chaitanya-rdY/AI-Based-Fraud-Management-System-for-UID-Aadhar)>
 ```
 
 Install the required dependencies:
